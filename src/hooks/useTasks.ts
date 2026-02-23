@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Task, TaskCategory } from '@/types/task';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
+const STORAGE_KEY = 'athlete-planner-tasks';
 
 const today = new Date().toISOString().split('T')[0];
 const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
@@ -16,8 +17,20 @@ const INITIAL_TASKS: Task[] = [
   { id: generateId(), title: 'Team dinner', category: 'personal', date: dayAfter, completed: false, time: '6:00 PM' },
 ];
 
+function loadTasks(): Task[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return INITIAL_TASKS;
+}
+
 export function useTasks() {
-  const [tasks, setTasks] = useState<Task[]>(INITIAL_TASKS);
+  const [tasks, setTasks] = useState<Task[]>(loadTasks);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
 
   const addTask = useCallback((title: string, category: TaskCategory, date: string, time?: string) => {
     setTasks(prev => [...prev, { id: generateId(), title, category, date, completed: false, time }]);
