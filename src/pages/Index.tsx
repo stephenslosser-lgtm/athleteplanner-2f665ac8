@@ -5,6 +5,7 @@ import { AddTaskDialog } from '@/components/AddTaskDialog';
 import { ColorSettings } from '@/components/ColorSettings';
 import { useTasks } from '@/hooks/useTasks';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
+import { useTheme } from '@/hooks/useTheme';
 import { Dumbbell } from 'lucide-react';
 
 const Index = () => {
@@ -12,6 +13,7 @@ const Index = () => {
   const [selectedDate, setSelectedDate] = useState(today);
   const { tasks, addTask, toggleTask, deleteTask, getDatesWithTasks } = useTasks();
   const { colors, setCategoryColor, resetColors } = useCategoryColors();
+  const { activeTheme, setTheme, themes } = useTheme();
 
   return (
     <div className="min-h-screen bg-background">
@@ -26,7 +28,7 @@ const Index = () => {
             </h1>
             <p className="text-xs text-muted-foreground">Train. Study. Dominate.</p>
           </div>
-          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} />
+          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} />
         </div>
       </header>
 
