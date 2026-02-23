@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { CalendarView } from '@/components/CalendarView';
 import { TaskList } from '@/components/TaskList';
 import { AddTaskDialog } from '@/components/AddTaskDialog';
+import { ColorSettings } from '@/components/ColorSettings';
 import { useTasks } from '@/hooks/useTasks';
+import { useCategoryColors } from '@/hooks/useCategoryColors';
 import { Dumbbell } from 'lucide-react';
 
 const Index = () => {
   const today = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(today);
   const { tasks, addTask, toggleTask, deleteTask, getDatesWithTasks } = useTasks();
+  const { colors, setCategoryColor, resetColors } = useCategoryColors();
 
   return (
     <div className="min-h-screen bg-background">
@@ -17,12 +20,13 @@ const Index = () => {
           <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center">
             <Dumbbell className="w-5 h-5 text-primary" />
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="text-xl font-display font-bold tracking-tight">
               Athlete<span className="text-gradient">Planner</span>
             </h1>
             <p className="text-xs text-muted-foreground">Train. Study. Dominate.</p>
           </div>
+          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} />
         </div>
       </header>
 
