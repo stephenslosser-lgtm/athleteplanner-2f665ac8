@@ -6,7 +6,9 @@ import { ColorSettings } from '@/components/ColorSettings';
 import { useTasks } from '@/hooks/useTasks';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
 import { useTheme } from '@/hooks/useTheme';
-import { Dumbbell } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { Dumbbell, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const today = new Date().toISOString().split('T')[0];
@@ -14,6 +16,7 @@ const Index = () => {
   const { tasks, addTask, toggleTask, deleteTask, getDatesWithTasks } = useTasks();
   const { colors, setCategoryColor, resetColors } = useCategoryColors();
   const { activeTheme, setTheme, themes } = useTheme();
+  const { signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,6 +32,9 @@ const Index = () => {
             <p className="text-xs text-muted-foreground">Train. Study. Dominate.</p>
           </div>
           <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} />
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={signOut} title="Sign out">
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
       </header>
 

@@ -1,47 +1,84 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Task, TaskCategory } from '@/types/task';
-
-const generateId = () => Math.random().toString(36).substr(2, 9);
-const STORAGE_KEY = 'athlete-planner-tasks';
-
-const today = new Date().toISOString().split('T')[0];
-const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-const dayAfter = new Date(Date.now() + 2 * 86400000).toISOString().split('T')[0];
-
-const INITIAL_TASKS: Task[] = [
-  { id: generateId(), title: 'Morning weight training', category: 'training', date: today, completed: false, time: '6:00 AM' },
-  { id: generateId(), title: 'Review game film', category: 'training', date: today, completed: false, time: '3:00 PM' },
-  { id: generateId(), title: 'Chemistry midterm prep', category: 'academic', date: today, completed: false, time: '7:00 PM' },
-  { id: generateId(), title: 'Sprint drills', category: 'training', date: tomorrow, completed: false, time: '6:30 AM' },
-  { id: generateId(), title: 'English essay due', category: 'academic', date: tomorrow, completed: false, time: '11:59 PM' },
-  { id: generateId(), title: 'Team dinner', category: 'personal', date: dayAfter, completed: false, time: '6:00 PM' },
-];
-
-function loadTasks(): Task[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch {}
-  return INITIAL_TASKS;
-}
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 export function useTasks() {
-  const [tasks, setTasks] = useState<Task[]>(loadTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const { user } = useAuth();
 
+  // Fetch tasks from database
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    if (!user) {
+      setTasks([]);
+      return;
+    }
+
+    const fetchTasks = async () => {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .order('date', { ascending: true });
+
+      if (!error && data) {
+        setTasks(data.map(t => ({
+          id: t.id,
+          title: t.title,
+          category: t.category as TaskCategory,
+          date: t.date,
+          completed: t.completed,
+          time: t.time ?? undefined,
+        })));
+      }
+    };
+
+    fetchTasks();
+  }, [user]);
+
+  const addTask = useCallback(async (title: string, category: TaskCategory, date: string, time?: string) => {
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert({ title, category, date, user_id: user.id, time: time ?? null })
+      .select()
+      .single();
+
+    if (!error && data) {
+      setTasks(prev => [...prev, {
+        id: data.id,
+        title: data.title,
+        category: data.category as TaskCategory,
+        date: data.date,
+        completed: data.completed,
+        time: data.time ?? undefined,
+      }]);
+    }
+  }, [user]);
+
+  const toggleTask = useCallback(async (id: string) => {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    const { error } = await supabase
+      .from('tasks')
+      .update({ completed: !task.completed })
+      .eq('id', id);
+
+    if (!error) {
+      setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    }
   }, [tasks]);
 
-  const addTask = useCallback((title: string, category: TaskCategory, date: string, time?: string) => {
-    setTasks(prev => [...prev, { id: generateId(), title, category, date, completed: false, time }]);
-  }, []);
+  const deleteTask = useCallback(async (id: string) => {
+    const { error } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', id);
 
-  const toggleTask = useCallback((id: string) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
-  }, []);
-
-  const deleteTask = useCallback((id: string) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
+    if (!error) {
+      setTasks(prev => prev.filter(t => t.id !== id));
+    }
   }, []);
 
   const getTasksForDate = useCallback((date: string) => {
