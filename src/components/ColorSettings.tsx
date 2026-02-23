@@ -1,7 +1,9 @@
 import { Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TaskCategory, COLOR_PRESETS, CATEGORY_LABELS } from '@/types/task';
+import { ThemePreset } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 import {
   Popover,
   PopoverContent,
@@ -12,11 +14,14 @@ interface ColorSettingsProps {
   colors: Record<TaskCategory, string>;
   onChangeColor: (category: TaskCategory, hsl: string) => void;
   onReset: () => void;
+  activeTheme: string;
+  themes: ThemePreset[];
+  onChangeTheme: (name: string) => void;
 }
 
 const categories: TaskCategory[] = ['training', 'academic', 'personal'];
 
-export function ColorSettings({ colors, onChangeColor, onReset }: ColorSettingsProps) {
+export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme }: ColorSettingsProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -26,6 +31,36 @@ export function ColorSettings({ colors, onChangeColor, onReset }: ColorSettingsP
       </PopoverTrigger>
       <PopoverContent className="w-72 bg-card border-border" align="end">
         <div className="space-y-4">
+          {/* Theme Section */}
+          <div>
+            <h3 className="font-display text-sm font-semibold mb-2">Theme</h3>
+            <div className="grid grid-cols-3 gap-1.5">
+              {themes.map(theme => (
+                <button
+                  key={theme.name}
+                  onClick={() => onChangeTheme(theme.name)}
+                  className={cn(
+                    "flex flex-col items-center gap-1.5 p-2 rounded-lg text-[10px] transition-all border",
+                    activeTheme === theme.name
+                      ? "border-foreground/40 bg-secondary"
+                      : "border-transparent hover:bg-secondary/50"
+                  )}
+                >
+                  <div className="flex gap-1">
+                    <span className="w-4 h-4 rounded-full" style={{ backgroundColor: `hsl(${theme.primary})` }} />
+                    <span className="w-4 h-4 rounded-full" style={{ backgroundColor: `hsl(${theme.background})` }} />
+                  </div>
+                  <span className="text-muted-foreground truncate w-full text-center">
+                    {theme.name.replace(' (Default)', '')}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <Separator className="bg-border" />
+
+          {/* Category Colors Section */}
           <div className="flex items-center justify-between">
             <h3 className="font-display text-sm font-semibold">Category Colors</h3>
             <button
