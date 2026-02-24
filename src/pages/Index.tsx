@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 const Index = () => {
   const today = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(today);
-  const { tasks, addTask, toggleTask, deleteTask, getDatesWithTasks } = useTasks();
+  const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks } = useTasks();
   const { colors, setCategoryColor, resetColors } = useCategoryColors();
   const { activeTheme, setTheme, themes } = useTheme();
   const { signOut } = useAuth();
@@ -53,6 +53,7 @@ const Index = () => {
             tasks={tasks}
             selectedDate={selectedDate}
             onToggle={toggleTask}
+            onEdit={editTask}
             onDelete={deleteTask}
           />
           <div className="hidden lg:block">
