@@ -70,6 +70,17 @@ export function useTasks() {
     }
   }, [tasks]);
 
+  const editTask = useCallback(async (id: string, updates: { title: string; category: TaskCategory; date: string; time?: string }) => {
+    const { error } = await supabase
+      .from('tasks')
+      .update({ title: updates.title, category: updates.category, date: updates.date, time: updates.time ?? null })
+      .eq('id', id);
+
+    if (!error) {
+      setTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+    }
+  }, []);
+
   const deleteTask = useCallback(async (id: string) => {
     const { error } = await supabase
       .from('tasks')
@@ -94,5 +105,5 @@ export function useTasks() {
     return dates;
   }, [tasks]);
 
-  return { tasks, addTask, toggleTask, deleteTask, getTasksForDate, getDatesWithTasks };
+  return { tasks, addTask, toggleTask, editTask, deleteTask, getTasksForDate, getDatesWithTasks };
 }

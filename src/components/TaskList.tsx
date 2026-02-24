@@ -1,4 +1,5 @@
-import { Task, CATEGORY_CONFIG } from '@/types/task';
+import { Task, TaskCategory, CATEGORY_CONFIG } from '@/types/task';
+import { EditTaskDialog } from '@/components/EditTaskDialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -7,6 +8,7 @@ interface TaskListProps {
   tasks: Task[];
   selectedDate: string;
   onToggle: (id: string) => void;
+  onEdit: (id: string, updates: { title: string; category: TaskCategory; date: string; time?: string }) => void;
   onDelete: (id: string) => void;
 }
 
@@ -15,7 +17,7 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 }
 
-export function TaskList({ tasks, selectedDate, onToggle, onDelete }: TaskListProps) {
+export function TaskList({ tasks, selectedDate, onToggle, onEdit, onDelete }: TaskListProps) {
   const dateTasks = tasks.filter(t => t.date === selectedDate);
   const incomplete = dateTasks.filter(t => !t.completed);
   const completed = dateTasks.filter(t => t.completed);
@@ -36,7 +38,7 @@ export function TaskList({ tasks, selectedDate, onToggle, onDelete }: TaskListPr
 
       <div className="space-y-2">
         {incomplete.map(task => (
-          <TaskItem key={task.id} task={task} onToggle={onToggle} onDelete={onDelete} />
+          <TaskItem key={task.id} task={task} onToggle={onToggle} onEdit={onEdit} onDelete={onDelete} />
         ))}
       </div>
 
@@ -46,7 +48,7 @@ export function TaskList({ tasks, selectedDate, onToggle, onDelete }: TaskListPr
           <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider">Completed</p>
           <div className="space-y-2">
             {completed.map(task => (
-              <TaskItem key={task.id} task={task} onToggle={onToggle} onDelete={onDelete} />
+              <TaskItem key={task.id} task={task} onToggle={onToggle} onEdit={onEdit} onDelete={onDelete} />
             ))}
           </div>
         </>
@@ -55,7 +57,7 @@ export function TaskList({ tasks, selectedDate, onToggle, onDelete }: TaskListPr
   );
 }
 
-function TaskItem({ task, onToggle, onDelete }: { task: Task; onToggle: (id: string) => void; onDelete: (id: string) => void }) {
+function TaskItem({ task, onToggle, onEdit, onDelete }: { task: Task; onToggle: (id: string) => void; onEdit: (id: string, updates: { title: string; category: TaskCategory; date: string; time?: string }) => void; onDelete: (id: string) => void }) {
   const config = CATEGORY_CONFIG[task.category];
 
   return (
@@ -84,6 +86,7 @@ function TaskItem({ task, onToggle, onDelete }: { task: Task; onToggle: (id: str
           )}
         </div>
       </div>
+      <EditTaskDialog task={task} onEdit={onEdit} />
       <button
         onClick={() => onDelete(task.id)}
         className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-destructive"
