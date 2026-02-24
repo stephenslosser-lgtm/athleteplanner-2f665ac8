@@ -26,7 +26,7 @@ export function Timeline({ tasks, selectedDate }: TimelineProps) {
   const unscheduled = dateTasks.filter(t => !t.time);
 
   return (
-    <div className="bg-card rounded-xl p-5 border border-border">
+    <div className="bg-card rounded-xl p-6 border border-border">
       <div className="flex items-center gap-2 mb-4">
         <Clock className="w-4 h-4 text-primary" />
         <h3 className="text-sm font-display font-semibold uppercase tracking-wider text-muted-foreground">
