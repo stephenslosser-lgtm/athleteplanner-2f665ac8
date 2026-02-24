@@ -7,6 +7,7 @@ export interface Task {
   date: string; // YYYY-MM-DD
   completed: boolean;
   time?: string;
+  end_time?: string;
 }
 
 export interface ColorPreset {

@@ -81,7 +81,9 @@ function TaskItem({ task, onToggle, onEdit, onDelete }: { task: Task; onToggle: 
           {task.time && (
             <>
               <Clock className="w-3 h-3 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">{task.time}</span>
+              <span className="text-xs text-muted-foreground">
+                {task.time}{task.end_time ? ` – ${task.end_time}` : ''}
+              </span>
             </>
           )}
         </div>

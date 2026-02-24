@@ -14,7 +14,7 @@ import {
 
 interface EditTaskDialogProps {
   task: Task;
-  onEdit: (id: string, updates: { title: string; category: TaskCategory; date: string; time?: string }) => void;
+  onEdit: (id: string, updates: { title: string; category: TaskCategory; date: string; time?: string; end_time?: string }) => void;
 }
 
 export function EditTaskDialog({ task, onEdit }: EditTaskDialogProps) {
@@ -23,6 +23,7 @@ export function EditTaskDialog({ task, onEdit }: EditTaskDialogProps) {
   const [category, setCategory] = useState<TaskCategory>(task.category);
   const [date, setDate] = useState(task.date);
   const [time, setTime] = useState(task.time ?? '');
+  const [endTime, setEndTime] = useState(task.end_time ?? '');
 
   useEffect(() => {
     if (open) {
@@ -30,13 +31,14 @@ export function EditTaskDialog({ task, onEdit }: EditTaskDialogProps) {
       setCategory(task.category);
       setDate(task.date);
       setTime(task.time ?? '');
+      setEndTime(task.end_time ?? '');
     }
   }, [open, task]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
-    onEdit(task.id, { title: title.trim(), category, date, time: time || undefined });
+    onEdit(task.id, { title: title.trim(), category, date, time: time || undefined, end_time: endTime || undefined });
     setOpen(false);
   };
 
@@ -94,14 +96,25 @@ export function EditTaskDialog({ task, onEdit }: EditTaskDialogProps) {
               className="bg-secondary border-border"
             />
           </div>
-          <div>
-            <label className="text-sm text-muted-foreground mb-2 block">Time (optional)</label>
-            <Input
-              type="time"
-              value={time}
-              onChange={e => setTime(e.target.value)}
-              className="bg-secondary border-border"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Start time</label>
+              <Input
+                type="time"
+                value={time}
+                onChange={e => setTime(e.target.value)}
+                className="bg-secondary border-border"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">End time</label>
+              <Input
+                type="time"
+                value={endTime}
+                onChange={e => setEndTime(e.target.value)}
+                className="bg-secondary border-border"
+              />
+            </div>
           </div>
           <Button type="submit" className="w-full" disabled={!title.trim()}>
             Save Changes

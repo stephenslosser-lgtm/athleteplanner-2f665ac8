@@ -14,7 +14,7 @@ import {
 
 interface AddTaskDialogProps {
   selectedDate: string;
-  onAdd: (title: string, category: TaskCategory, date: string, time?: string) => void;
+  onAdd: (title: string, category: TaskCategory, date: string, time?: string, end_time?: string) => void;
 }
 
 export function AddTaskDialog({ selectedDate, onAdd }: AddTaskDialogProps) {
@@ -22,13 +22,15 @@ export function AddTaskDialog({ selectedDate, onAdd }: AddTaskDialogProps) {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<TaskCategory>('training');
   const [time, setTime] = useState('');
+  const [endTime, setEndTime] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
-    onAdd(title.trim(), category, selectedDate, time || undefined);
+    onAdd(title.trim(), category, selectedDate, time || undefined, endTime || undefined);
     setTitle('');
     setTime('');
+    setEndTime('');
     setOpen(false);
   };
 
@@ -78,12 +80,26 @@ export function AddTaskDialog({ selectedDate, onAdd }: AddTaskDialogProps) {
               })}
             </div>
           </div>
-          <Input
-            type="time"
-            value={time}
-            onChange={e => setTime(e.target.value)}
-            className="bg-secondary border-border"
-          />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Start time</label>
+              <Input
+                type="time"
+                value={time}
+                onChange={e => setTime(e.target.value)}
+                className="bg-secondary border-border"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">End time</label>
+              <Input
+                type="time"
+                value={endTime}
+                onChange={e => setEndTime(e.target.value)}
+                className="bg-secondary border-border"
+              />
+            </div>
+          </div>
           <Button type="submit" className="w-full" disabled={!title.trim()}>
             Add Task
           </Button>
