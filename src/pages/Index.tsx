@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CalendarView } from '@/components/CalendarView';
 import { TaskList } from '@/components/TaskList';
+import { Timeline } from '@/components/Timeline';
 import { AddTaskDialog } from '@/components/AddTaskDialog';
 import { ColorSettings } from '@/components/ColorSettings';
 import { useTasks } from '@/hooks/useTasks';
@@ -39,7 +40,7 @@ const Index = () => {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr_240px] gap-6">
           <div className="space-y-4">
             <CalendarView
               selectedDate={selectedDate}
@@ -54,6 +55,9 @@ const Index = () => {
             onToggle={toggleTask}
             onDelete={deleteTask}
           />
+          <div className="hidden lg:block">
+            <Timeline tasks={tasks} selectedDate={selectedDate} />
+          </div>
         </div>
       </main>
     </div>
