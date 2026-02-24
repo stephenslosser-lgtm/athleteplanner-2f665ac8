@@ -74,7 +74,9 @@ export function Timeline({ tasks, selectedDate }: TimelineProps) {
                       <div className="flex items-center gap-1.5">
                         <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", config.dotClass)} />
                         <span className="truncate font-medium">{task.title}</span>
-                        <span className="text-muted-foreground ml-auto shrink-0">{task.time}</span>
+                        <span className="text-muted-foreground ml-auto shrink-0">
+                          {task.time}{task.end_time ? ` – ${task.end_time}` : ''}
+                        </span>
                       </div>
                     </div>
                   );

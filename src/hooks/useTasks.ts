@@ -28,6 +28,7 @@ export function useTasks() {
           date: t.date,
           completed: t.completed,
           time: t.time ?? undefined,
+          end_time: (t as any).end_time ?? undefined,
         })));
       }
     };
@@ -35,12 +36,12 @@ export function useTasks() {
     fetchTasks();
   }, [user]);
 
-  const addTask = useCallback(async (title: string, category: TaskCategory, date: string, time?: string) => {
+  const addTask = useCallback(async (title: string, category: TaskCategory, date: string, time?: string, end_time?: string) => {
     if (!user) return;
 
     const { data, error } = await supabase
       .from('tasks')
-      .insert({ title, category, date, user_id: user.id, time: time ?? null })
+      .insert({ title, category, date, user_id: user.id, time: time ?? null, end_time: end_time ?? null } as any)
       .select()
       .single();
 
@@ -52,6 +53,7 @@ export function useTasks() {
         date: data.date,
         completed: data.completed,
         time: data.time ?? undefined,
+        end_time: (data as any).end_time ?? undefined,
       }]);
     }
   }, [user]);
@@ -70,10 +72,10 @@ export function useTasks() {
     }
   }, [tasks]);
 
-  const editTask = useCallback(async (id: string, updates: { title: string; category: TaskCategory; date: string; time?: string }) => {
+  const editTask = useCallback(async (id: string, updates: { title: string; category: TaskCategory; date: string; time?: string; end_time?: string }) => {
     const { error } = await supabase
       .from('tasks')
-      .update({ title: updates.title, category: updates.category, date: updates.date, time: updates.time ?? null })
+      .update({ title: updates.title, category: updates.category, date: updates.date, time: updates.time ?? null, end_time: updates.end_time ?? null } as any)
       .eq('id', id);
 
     if (!error) {

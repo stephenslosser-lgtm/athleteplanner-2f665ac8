@@ -1,0 +1,1 @@
+ALTER TABLE public.tasks ADD COLUMN end_time text DEFAULT NULL;

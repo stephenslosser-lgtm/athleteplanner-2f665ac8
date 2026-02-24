@@ -20,6 +20,7 @@ export type Database = {
           completed: boolean
           created_at: string
           date: string
+          end_time: string | null
           id: string
           time: string | null
           title: string
@@ -30,6 +31,7 @@ export type Database = {
           completed?: boolean
           created_at?: string
           date: string
+          end_time?: string | null
           id?: string
           time?: string | null
           title: string
@@ -40,6 +42,7 @@ export type Database = {
           completed?: boolean
           created_at?: string
           date?: string
+          end_time?: string | null
           id?: string
           time?: string | null
           title?: string
