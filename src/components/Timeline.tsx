@@ -1,4 +1,4 @@
-import { Task, CATEGORY_CONFIG } from '@/types/task';
+import { Task } from '@/types/task';
 import { cn } from '@/lib/utils';
 import { Clock } from 'lucide-react';
 
@@ -59,37 +59,42 @@ export function Timeline({ tasks, selectedDate }: TimelineProps) {
 
         {/* Task bars */}
         {scheduled.map(task => {
-          const config = CATEGORY_CONFIG[task.category];
           const startMins = timeToMinutes(task.time!);
-          const endMins = task.end_time ? timeToMinutes(task.end_time) : startMins + 30; // default 30min
-          const duration = Math.max(endMins - startMins, 15); // minimum 15min visual
+          const endMins = task.end_time ? timeToMinutes(task.end_time) : startMins + 30;
+          const duration = Math.max(endMins - startMins, 15);
 
           const topPx = ((startMins - START_HOUR * 60) / 60) * HOUR_HEIGHT;
           const heightPx = (duration / 60) * HOUR_HEIGHT;
 
-          // Left offset: time label (48px w-12) + gap (12px) + dot col (~8px) + gap (12px) = ~80px
           const leftOffset = 80;
+
+          // Use CSS variable for category color
+          const categoryVar = `var(--${task.category})`;
 
           return (
             <div
               key={task.id}
               className={cn(
-                "absolute right-0 rounded-md border text-xs overflow-hidden",
-                "border-border",
+                "absolute right-0 rounded-md text-xs overflow-hidden",
                 task.completed && "opacity-40"
               )}
               style={{
                 top: topPx,
                 height: Math.max(heightPx, 20),
                 left: leftOffset,
+                backgroundColor: `hsl(${categoryVar} / 0.12)`,
+                borderLeft: `3px solid hsl(${categoryVar})`,
+                border: `1px solid hsl(${categoryVar} / 0.25)`,
+                borderLeftWidth: 3,
+                borderLeftColor: `hsl(${categoryVar})`,
               }}
             >
-              <div
-                className={cn("h-full px-2.5 py-1 flex flex-col justify-center", config.colorClass + "/15")}
-                style={{ borderLeft: '3px solid' }}
-              >
+              <div className="h-full px-2.5 py-1 flex flex-col justify-center">
                 <div className="flex items-center gap-1.5">
-                  <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", config.dotClass)} />
+                  <span
+                    className="w-1.5 h-1.5 rounded-full shrink-0"
+                    style={{ backgroundColor: `hsl(${categoryVar})` }}
+                  />
                   <span className={cn("truncate font-medium", task.completed && "line-through")}>
                     {task.title}
                   </span>
@@ -111,7 +116,7 @@ export function Timeline({ tasks, selectedDate }: TimelineProps) {
           <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-2">No time set</p>
           <div className="space-y-1">
             {unscheduled.map(task => {
-              const config = CATEGORY_CONFIG[task.category];
+              const categoryVar = `var(--${task.category})`;
               return (
                 <div
                   key={task.id}
@@ -122,7 +127,10 @@ export function Timeline({ tasks, selectedDate }: TimelineProps) {
                   )}
                 >
                   <div className="flex items-center gap-1.5">
-                    <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", config.dotClass)} />
+                    <span
+                      className="w-1.5 h-1.5 rounded-full shrink-0"
+                      style={{ backgroundColor: `hsl(${categoryVar})` }}
+                    />
                     <span className="truncate">{task.title}</span>
                   </div>
                 </div>
