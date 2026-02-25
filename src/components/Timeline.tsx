@@ -8,6 +8,8 @@ interface TimelineProps {
 }
 
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6 AM to 9 PM
+const HOUR_HEIGHT = 48; // px per hour
+const START_HOUR = 6;
 
 function formatHour(h: number) {
   const ampm = h >= 12 ? 'PM' : 'AM';
@@ -25,6 +27,8 @@ export function Timeline({ tasks, selectedDate }: TimelineProps) {
   const scheduled = dateTasks.filter(t => t.time).sort((a, b) => a.time!.localeCompare(b.time!));
   const unscheduled = dateTasks.filter(t => !t.time);
 
+  const totalHeight = HOURS.length * HOUR_HEIGHT;
+
   return (
     <div className="bg-card rounded-xl p-6 border border-border">
       <div className="flex items-center gap-2 mb-4">
@@ -34,53 +38,67 @@ export function Timeline({ tasks, selectedDate }: TimelineProps) {
         </h3>
       </div>
 
-      <div className="relative">
-        {HOURS.map(hour => {
-          const hourStr = `${String(hour).padStart(2, '0')}:00`;
-          const hourTasks = scheduled.filter(t => {
-            const mins = timeToMinutes(t.time!);
-            return mins >= hour * 60 && mins < (hour + 1) * 60;
-          });
+      <div className="relative" style={{ height: totalHeight }}>
+        {/* Hour grid lines */}
+        {HOURS.map((hour, i) => (
+          <div
+            key={hour}
+            className="absolute left-0 right-0 flex items-start gap-3"
+            style={{ top: i * HOUR_HEIGHT }}
+          >
+            <div className="w-12 text-[11px] text-muted-foreground text-right shrink-0 font-medium leading-none pt-px">
+              {formatHour(hour)}
+            </div>
+            <div className="flex flex-col items-center shrink-0">
+              <div className="w-2 h-2 rounded-full bg-border" />
+              <div className="w-px bg-border" style={{ height: HOUR_HEIGHT - 8 }} />
+            </div>
+            <div className="flex-1" />
+          </div>
+        ))}
+
+        {/* Task bars */}
+        {scheduled.map(task => {
+          const config = CATEGORY_CONFIG[task.category];
+          const startMins = timeToMinutes(task.time!);
+          const endMins = task.end_time ? timeToMinutes(task.end_time) : startMins + 30; // default 30min
+          const duration = Math.max(endMins - startMins, 15); // minimum 15min visual
+
+          const topPx = ((startMins - START_HOUR * 60) / 60) * HOUR_HEIGHT;
+          const heightPx = (duration / 60) * HOUR_HEIGHT;
+
+          // Left offset: time label (48px w-12) + gap (12px) + dot col (~8px) + gap (12px) = ~80px
+          const leftOffset = 80;
 
           return (
-            <div key={hour} className="flex gap-3 min-h-[2.5rem]">
-              {/* Time label */}
-              <div className="w-12 text-[11px] text-muted-foreground pt-0.5 text-right shrink-0 font-medium">
-                {formatHour(hour)}
-              </div>
-
-              {/* Line + dot */}
-              <div className="flex flex-col items-center shrink-0">
-                <div className={cn(
-                  "w-2 h-2 rounded-full mt-1.5",
-                  hourTasks.length > 0 ? "bg-primary" : "bg-border"
-                )} />
-                <div className="w-px flex-1 bg-border" />
-              </div>
-
-              {/* Tasks at this hour */}
-              <div className="flex-1 pb-2 space-y-1">
-                {hourTasks.map(task => {
-                  const config = CATEGORY_CONFIG[task.category];
-                  return (
-                    <div
-                      key={task.id}
-                      className={cn(
-                        "text-xs px-2.5 py-1.5 rounded-md border",
-                        "bg-secondary/50 border-border",
-                        task.completed && "opacity-40 line-through"
-                      )}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", config.dotClass)} />
-                        <span className="truncate font-medium">{task.title}</span>
-                        <span className="text-muted-foreground ml-auto shrink-0">
-                          {task.time}{task.end_time ? ` – ${task.end_time}` : ''}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+            <div
+              key={task.id}
+              className={cn(
+                "absolute right-0 rounded-md border text-xs overflow-hidden",
+                "border-border",
+                task.completed && "opacity-40"
+              )}
+              style={{
+                top: topPx,
+                height: Math.max(heightPx, 20),
+                left: leftOffset,
+              }}
+            >
+              <div
+                className={cn("h-full px-2.5 py-1 flex flex-col justify-center", config.colorClass + "/15")}
+                style={{ borderLeft: '3px solid' }}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", config.dotClass)} />
+                  <span className={cn("truncate font-medium", task.completed && "line-through")}>
+                    {task.title}
+                  </span>
+                </div>
+                {heightPx > 28 && (
+                  <span className="text-[10px] text-muted-foreground mt-0.5 pl-3">
+                    {task.time}{task.end_time ? ` – ${task.end_time}` : ''}
+                  </span>
+                )}
               </div>
             </div>
           );
