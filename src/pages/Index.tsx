@@ -24,7 +24,7 @@ const Index = () => {
   const [calMonth, setCalMonth] = useState(new Date().getMonth());
   const [calYear, setCalYear] = useState(new Date().getFullYear());
   const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks } = useTasks();
-  const { goals, addGoal, toggleGoal, deleteGoal, getDatesWithGoals } = useGoals();
+  const { goals, addGoal, toggleGoal, deleteGoal, editGoal, getDatesWithGoals } = useGoals();
   const { colors, setCategoryColor, resetColors } = useCategoryColors();
   const { activeTheme, setTheme, themes } = useTheme();
   const { signOut } = useAuth();
@@ -101,7 +101,7 @@ const Index = () => {
           </div>
         ) : (
           <div className="max-w-xl mx-auto">
-            <GoalsList goals={goals} addGoal={addGoal} toggleGoal={toggleGoal} deleteGoal={deleteGoal} />
+            <GoalsList goals={goals} addGoal={addGoal} toggleGoal={toggleGoal} deleteGoal={deleteGoal} editGoal={editGoal} />
           </div>
         )}
       </main>

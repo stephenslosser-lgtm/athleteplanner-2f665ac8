@@ -68,11 +68,18 @@ export function useGoals() {
     }
   }, []);
 
+  const editGoal = useCallback(async (id: string, updates: { title?: string; type?: GoalType; due_date?: string | null }) => {
+    const { error } = await (supabase.from('goals' as any) as any).update(updates).eq('id', id);
+    if (!error) {
+      setGoals(prev => prev.map(g => g.id === id ? { ...g, ...updates, type: (updates.type ?? g.type) as GoalType } : g));
+    }
+  }, []);
+
   const getDatesWithGoals = useCallback((): Set<string> => {
     const dates = new Set<string>();
     goals.forEach(g => { if (g.due_date) dates.add(g.due_date); });
     return dates;
   }, [goals]);
 
-  return { goals, addGoal, toggleGoal, deleteGoal, getDatesWithGoals };
+  return { goals, addGoal, toggleGoal, deleteGoal, editGoal, getDatesWithGoals };
 }
