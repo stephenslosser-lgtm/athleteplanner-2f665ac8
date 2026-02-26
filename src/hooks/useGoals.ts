@@ -10,6 +10,7 @@ export interface Goal {
   type: GoalType;
   completed: boolean;
   created_at: string;
+  due_date: string | null;
 }
 
 export function useGoals() {
@@ -32,21 +33,22 @@ export function useGoals() {
           type: g.type as GoalType,
           completed: g.completed,
           created_at: g.created_at,
+          due_date: g.due_date,
         })));
       }
     };
     fetch();
   }, [user]);
 
-  const addGoal = useCallback(async (title: string, type: GoalType) => {
+  const addGoal = useCallback(async (title: string, type: GoalType, dueDate?: string | null) => {
     if (!user) return;
     const { data, error } = await (supabase.from('goals' as any) as any)
-      .insert({ title, type, user_id: user.id })
+      .insert({ title, type, user_id: user.id, due_date: dueDate || null })
       .select()
       .single();
 
     if (!error && data) {
-      setGoals(prev => [{ id: data.id, title: data.title, type: data.type as GoalType, completed: data.completed, created_at: data.created_at }, ...prev]);
+      setGoals(prev => [{ id: data.id, title: data.title, type: data.type as GoalType, completed: data.completed, created_at: data.created_at, due_date: data.due_date }, ...prev]);
     }
   }, [user]);
 
