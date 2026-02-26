@@ -8,6 +8,7 @@ interface CalendarViewProps {
   selectedDate: string;
   onSelectDate: (date: string) => void;
   datesWithTasks: Map<string, Set<TaskCategory>>;
+  datesWithGoals?: Set<string>;
 }
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -17,7 +18,7 @@ function toDateStr(y: number, m: number, d: number) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 
-export function CalendarView({ selectedDate, onSelectDate, datesWithTasks }: CalendarViewProps) {
+export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, datesWithGoals }: CalendarViewProps) {
   const today = new Date();
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -71,6 +72,7 @@ export function CalendarView({ selectedDate, onSelectDate, datesWithTasks }: Cal
           const isToday = dateStr === todayStr;
           const isSelected = dateStr === selectedDate;
           const categories = datesWithTasks.get(dateStr);
+          const hasGoal = datesWithGoals?.has(dateStr);
 
           return (
             <button
@@ -84,9 +86,9 @@ export function CalendarView({ selectedDate, onSelectDate, datesWithTasks }: Cal
               )}
             >
               {day}
-              {categories && categories.size > 0 && (
+              {(categories && categories.size > 0 || hasGoal) && (
                 <div className="flex gap-0.5 mt-0.5">
-                  {Array.from(categories).map(cat => (
+                  {categories && Array.from(categories).map(cat => (
                     <span
                       key={cat}
                       className={cn(
@@ -97,6 +99,9 @@ export function CalendarView({ selectedDate, onSelectDate, datesWithTasks }: Cal
                       )}
                     />
                   ))}
+                  {hasGoal && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                  )}
                 </div>
               )}
             </button>

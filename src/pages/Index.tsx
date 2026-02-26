@@ -6,6 +6,7 @@ import { AddTaskDialog } from '@/components/AddTaskDialog';
 import { ColorSettings } from '@/components/ColorSettings';
 import { GoalsList } from '@/components/GoalsList';
 import { useTasks } from '@/hooks/useTasks';
+import { useGoals } from '@/hooks/useGoals';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,6 +21,7 @@ const Index = () => {
   const [selectedDate, setSelectedDate] = useState(today);
   const [activeView, setActiveView] = useState<ViewTab>('planner');
   const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks } = useTasks();
+  const { goals, addGoal, toggleGoal, deleteGoal, getDatesWithGoals } = useGoals();
   const { colors, setCategoryColor, resetColors } = useCategoryColors();
   const { activeTheme, setTheme, themes } = useTheme();
   const { signOut } = useAuth();
@@ -77,6 +79,7 @@ const Index = () => {
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
                 datesWithTasks={getDatesWithTasks()}
+                datesWithGoals={getDatesWithGoals()}
               />
               <AddTaskDialog selectedDate={selectedDate} onAdd={addTask} />
             </div>
@@ -93,7 +96,7 @@ const Index = () => {
           </div>
         ) : (
           <div className="max-w-xl mx-auto">
-            <GoalsList />
+            <GoalsList goals={goals} addGoal={addGoal} toggleGoal={toggleGoal} deleteGoal={deleteGoal} />
           </div>
         )}
       </main>

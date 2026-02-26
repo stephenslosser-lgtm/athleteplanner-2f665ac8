@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { Goal, GoalType, useGoals } from '@/hooks/useGoals';
+import { Goal, GoalType } from '@/hooks/useGoals';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -10,8 +10,14 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Plus, Trash2, Target, Rocket, CalendarIcon } from 'lucide-react';
 
-export function GoalsList() {
-  const { goals, addGoal, toggleGoal, deleteGoal } = useGoals();
+interface GoalsListProps {
+  goals: Goal[];
+  addGoal: (title: string, type: GoalType, dueDate?: string | null) => void;
+  toggleGoal: (id: string) => void;
+  deleteGoal: (id: string) => void;
+}
+
+export function GoalsList({ goals, addGoal, toggleGoal, deleteGoal }: GoalsListProps) {
   const [newTitle, setNewTitle] = useState('');
   const [dueDate, setDueDate] = useState<Date | undefined>();
   const [activeTab, setActiveTab] = useState<GoalType>('short_term');

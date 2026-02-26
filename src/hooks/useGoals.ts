@@ -68,5 +68,11 @@ export function useGoals() {
     }
   }, []);
 
-  return { goals, addGoal, toggleGoal, deleteGoal };
+  const getDatesWithGoals = useCallback((): Set<string> => {
+    const dates = new Set<string>();
+    goals.forEach(g => { if (g.due_date) dates.add(g.due_date); });
+    return dates;
+  }, [goals]);
+
+  return { goals, addGoal, toggleGoal, deleteGoal, getDatesWithGoals };
 }
