@@ -9,6 +9,7 @@ interface CalendarViewProps {
   onSelectDate: (date: string) => void;
   datesWithTasks: Map<string, Set<TaskCategory>>;
   datesWithGoals?: Set<string>;
+  onMonthChange?: (year: number, month: number) => void;
 }
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -18,7 +19,7 @@ function toDateStr(y: number, m: number, d: number) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 
-export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, datesWithGoals }: CalendarViewProps) {
+export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, datesWithGoals, onMonthChange }: CalendarViewProps) {
   const today = new Date();
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -29,12 +30,18 @@ export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, dates
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
 
   const prev = () => {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
-    else setViewMonth(m => m - 1);
+    const newMonth = viewMonth === 0 ? 11 : viewMonth - 1;
+    const newYear = viewMonth === 0 ? viewYear - 1 : viewYear;
+    setViewMonth(newMonth);
+    if (viewMonth === 0) setViewYear(y => y - 1);
+    onMonthChange?.(newYear, newMonth);
   };
   const next = () => {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); }
-    else setViewMonth(m => m + 1);
+    const newMonth = viewMonth === 11 ? 0 : viewMonth + 1;
+    const newYear = viewMonth === 11 ? viewYear + 1 : viewYear;
+    setViewMonth(newMonth);
+    if (viewMonth === 11) setViewYear(y => y + 1);
+    onMonthChange?.(newYear, newMonth);
   };
 
   const cells: (number | null)[] = [];

@@ -5,6 +5,7 @@ import { Timeline } from '@/components/Timeline';
 import { AddTaskDialog } from '@/components/AddTaskDialog';
 import { ColorSettings } from '@/components/ColorSettings';
 import { GoalsList } from '@/components/GoalsList';
+import { GoalReminders } from '@/components/GoalReminders';
 import { useTasks } from '@/hooks/useTasks';
 import { useGoals } from '@/hooks/useGoals';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
@@ -20,6 +21,8 @@ const Index = () => {
   const today = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(today);
   const [activeView, setActiveView] = useState<ViewTab>('planner');
+  const [calMonth, setCalMonth] = useState(new Date().getMonth());
+  const [calYear, setCalYear] = useState(new Date().getFullYear());
   const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks } = useTasks();
   const { goals, addGoal, toggleGoal, deleteGoal, getDatesWithGoals } = useGoals();
   const { colors, setCategoryColor, resetColors } = useCategoryColors();
@@ -80,7 +83,9 @@ const Index = () => {
                 onSelectDate={setSelectedDate}
                 datesWithTasks={getDatesWithTasks()}
                 datesWithGoals={getDatesWithGoals()}
+                onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
               />
+              <GoalReminders goals={goals} viewYear={calYear} viewMonth={calMonth} />
               <AddTaskDialog selectedDate={selectedDate} onAdd={addTask} />
             </div>
             <TaskList
