@@ -6,6 +6,7 @@ import { AddTaskDialog } from '@/components/AddTaskDialog';
 import { ColorSettings } from '@/components/ColorSettings';
 import { GoalsList } from '@/components/GoalsList';
 import { GoalReminders } from '@/components/GoalReminders';
+import { FamilySharingDialog } from '@/components/FamilySharingDialog';
 import { QuickStats } from '@/components/QuickStats';
 import { useTasks } from '@/hooks/useTasks';
 import { useGoals } from '@/hooks/useGoals';
@@ -68,6 +69,7 @@ const Index = () => {
             </button>
           </div>
 
+          <FamilySharingDialog />
           <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} />
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={signOut} title="Sign out">
             <LogOut className="h-4 w-4" />
