@@ -47,17 +47,24 @@ export function useFamilySharing() {
       .select()
       .single();
 
-    if (!error && data) {
-      // Auto-join the creator
-      await (supabase.from('family_members' as any) as any)
-        .insert({ group_id: data.id, user_id: user.id });
-      await fetchGroups();
-      await fetchMembers();
+    console.log('createGroup result:', { data, error });
+
+    if (error || !data) {
+      console.error('Failed to create group:', error);
       setLoading(false);
-      return data as FamilyGroup;
+      return null;
     }
+
+    // Auto-join the creator
+    const { error: joinError } = await (supabase.from('family_members' as any) as any)
+      .insert({ group_id: data.id, user_id: user.id });
+    
+    console.log('Auto-join result:', { joinError });
+
+    await fetchGroups();
+    await fetchMembers();
     setLoading(false);
-    return null;
+    return data as FamilyGroup;
   }, [user, fetchGroups, fetchMembers]);
 
   const joinGroup = useCallback(async (inviteCode: string) => {
