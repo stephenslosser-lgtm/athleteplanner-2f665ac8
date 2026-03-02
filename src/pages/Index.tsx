@@ -6,6 +6,7 @@ import { AddTaskDialog } from '@/components/AddTaskDialog';
 import { ColorSettings } from '@/components/ColorSettings';
 import { GoalsList } from '@/components/GoalsList';
 import { GoalReminders } from '@/components/GoalReminders';
+import { QuickStats } from '@/components/QuickStats';
 import { useTasks } from '@/hooks/useTasks';
 import { useGoals } from '@/hooks/useGoals';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
@@ -86,6 +87,7 @@ const Index = () => {
                 onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
               />
               <GoalReminders goals={goals} viewYear={calYear} viewMonth={calMonth} />
+              <QuickStats tasks={tasks} />
               <AddTaskDialog selectedDate={selectedDate} onAdd={addTask} />
             </div>
             <TaskList
