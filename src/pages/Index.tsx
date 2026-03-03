@@ -13,7 +13,8 @@ import { useGoals } from '@/hooks/useGoals';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
-import { Dumbbell, LogOut, CalendarDays, Target } from 'lucide-react';
+import { LogOut, CalendarDays, Target } from 'lucide-react';
+import brandLogo from '@/assets/brand-logo.png';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -35,8 +36,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center">
-            <Dumbbell className="w-5 h-5 text-primary" />
+          <div className="w-9 h-9 rounded-lg overflow-hidden flex items-center justify-center">
+            <img src={brandLogo} alt="Athlete Planner logo" className="w-9 h-9 object-cover" />
           </div>
           <div className="flex-1">
             <h1 className="text-xl font-display font-bold tracking-tight">
