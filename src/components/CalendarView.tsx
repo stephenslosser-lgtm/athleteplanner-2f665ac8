@@ -9,6 +9,7 @@ interface CalendarViewProps {
   onSelectDate: (date: string) => void;
   datesWithTasks: Map<string, Set<TaskCategory>>;
   datesWithGoals?: Set<string>;
+  completedDates?: Set<string>;
   onMonthChange?: (year: number, month: number) => void;
 }
 
