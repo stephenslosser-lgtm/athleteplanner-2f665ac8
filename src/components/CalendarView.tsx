@@ -81,6 +81,7 @@ export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, dates
           const isSelected = dateStr === selectedDate;
           const categories = datesWithTasks.get(dateStr);
           const hasGoal = datesWithGoals?.has(dateStr);
+          const isAllCompleted = completedDates?.has(dateStr);
 
           return (
             <button
@@ -89,8 +90,9 @@ export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, dates
               className={cn(
                 "relative flex flex-col items-center justify-center py-2 rounded-lg transition-all text-sm",
                 isSelected && "bg-primary/20 text-primary ring-1 ring-primary/40",
-                isToday && !isSelected && "bg-secondary text-foreground font-semibold",
-                !isSelected && !isToday && "hover:bg-secondary/60 text-foreground/80"
+                isAllCompleted && !isSelected && "bg-completed-day/20 text-completed-day font-semibold",
+                isToday && !isSelected && !isAllCompleted && "bg-secondary text-foreground font-semibold",
+                !isSelected && !isToday && !isAllCompleted && "hover:bg-secondary/60 text-foreground/80"
               )}
             >
               {day}

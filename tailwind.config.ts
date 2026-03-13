@@ -54,6 +54,7 @@ export default {
         training: "hsl(var(--training))",
         academic: "hsl(var(--academic))",
         personal: "hsl(var(--personal))",
+        "completed-day": "hsl(var(--completed-day))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
