@@ -96,7 +96,7 @@ export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, dates
               )}
             >
               {day}
-              {(categories && categories.size > 0 || hasGoal) && (
+              {!isAllCompleted && (categories && categories.size > 0 || hasGoal) && (
                 <div className="flex gap-0.5 mt-0.5">
                   {categories && Array.from(categories).map(cat => (
                     <span
