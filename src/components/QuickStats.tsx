@@ -7,11 +7,11 @@ interface QuickStatsProps {
 
 export function QuickStats({ tasks }: QuickStatsProps) {
   const categories: TaskCategory[] = ['training', 'academic', 'personal'];
+  const activeTasks = tasks.filter(t => !t.completed);
   const counts = categories.map(cat => ({
     category: cat,
     label: CATEGORY_LABELS[cat],
-    total: tasks.filter(t => t.category === cat).length,
-    done: tasks.filter(t => t.category === cat && t.completed).length,
+    total: activeTasks.filter(t => t.category === cat).length,
   }));
 
   return (
@@ -23,7 +23,7 @@ export function QuickStats({ tasks }: QuickStatsProps) {
             <span className={cn("w-2.5 h-2.5 rounded-full mb-1.5", `bg-${c.category}`)} />
             <span className="text-lg font-bold text-foreground">{c.total}</span>
             <span className="text-[10px] text-muted-foreground">{c.label}</span>
-            <span className="text-[10px] text-muted-foreground">{c.done} done</span>
+            <span className="text-[10px] text-muted-foreground">remaining</span>
           </div>
         ))}
       </div>
