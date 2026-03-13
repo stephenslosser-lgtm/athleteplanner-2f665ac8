@@ -95,6 +95,7 @@ const Index = () => {
                 onSelectDate={setSelectedDate}
                 datesWithTasks={getDatesWithTasks()}
                 datesWithGoals={getDatesWithGoals()}
+                completedDates={completedDates}
                 onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
               />
               <GoalReminders goals={goals} viewYear={calYear} viewMonth={calMonth} />
