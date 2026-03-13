@@ -79,7 +79,7 @@ const Index = () => {
           </div>
 
           <FamilySharingDialog />
-          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} />
+          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} completedDayColor={completedDayColor} onChangeCompletedDayColor={setCompletedDayColor} />
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={signOut} title="Sign out">
             <LogOut className="h-4 w-4" />
           </Button>

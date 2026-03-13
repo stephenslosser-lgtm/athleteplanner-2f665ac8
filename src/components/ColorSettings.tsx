@@ -122,6 +122,34 @@ export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, the
               </div>
             </div>
           ))}
+
+          <Separator className="bg-border" />
+
+          {/* Completed Day Color */}
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block">
+              All Tasks Completed
+            </label>
+            <div className="flex flex-wrap gap-1.5">
+              {COLOR_PRESETS.map(preset => {
+                const isSelected = completedDayColor === preset.hsl;
+                return (
+                  <button
+                    key={preset.hsl}
+                    title={preset.name}
+                    onClick={() => onChangeCompletedDayColor(preset.hsl)}
+                    className={cn(
+                      "w-6 h-6 rounded-full transition-all border-2",
+                      isSelected
+                        ? "border-foreground scale-110"
+                        : "border-transparent hover:scale-110"
+                    )}
+                    style={{ backgroundColor: `hsl(${preset.hsl})` }}
+                  />
+                );
+              })}
+            </div>
+          </div>
         </div>
       </PopoverContent>
     </Popover>
