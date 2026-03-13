@@ -20,7 +20,7 @@ function toDateStr(y: number, m: number, d: number) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 
-export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, datesWithGoals, onMonthChange }: CalendarViewProps) {
+export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, datesWithGoals, completedDates, onMonthChange }: CalendarViewProps) {
   const today = new Date();
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [viewYear, setViewYear] = useState(today.getFullYear());
