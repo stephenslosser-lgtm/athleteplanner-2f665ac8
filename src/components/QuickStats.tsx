@@ -23,7 +23,7 @@ export function QuickStats({ tasks }: QuickStatsProps) {
             <span className={cn("w-2.5 h-2.5 rounded-full mb-1.5", `bg-${c.category}`)} />
             <span className="text-lg font-bold text-foreground">{c.total}</span>
             <span className="text-[10px] text-muted-foreground">{c.label}</span>
-            <span className="text-[10px] text-muted-foreground">{c.done} done</span>
+            <span className="text-[10px] text-muted-foreground">remaining</span>
           </div>
         ))}
       </div>
