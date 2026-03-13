@@ -28,7 +28,15 @@ const Index = () => {
   const [calYear, setCalYear] = useState(new Date().getFullYear());
   const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks } = useTasks();
   const { goals, addGoal, toggleGoal, deleteGoal, editGoal, getDatesWithGoals } = useGoals();
-  const { colors, setCategoryColor, resetColors } = useCategoryColors();
+  const { colors, setCategoryColor, resetColors, completedDayColor, setCompletedDayColor } = useCategoryColors();
+
+  // Compute dates where all tasks are completed
+  const completedDates = new Set(
+    Array.from(getDatesWithTasks().keys()).filter(date => {
+      const dateTasks = tasks.filter(t => t.date === date);
+      return dateTasks.length > 0 && dateTasks.every(t => t.completed);
+    })
+  );
   const { activeTheme, setTheme, themes } = useTheme();
   const { signOut } = useAuth();
 
