@@ -17,6 +17,8 @@ interface ColorSettingsProps {
   activeTheme: string;
   themes: ThemePreset[];
   onChangeTheme: (name: string) => void;
+  completedDayColor: string;
+  onChangeCompletedDayColor: (hsl: string) => void;
 }
 
 const categories: TaskCategory[] = ['training', 'academic', 'personal'];
