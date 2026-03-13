@@ -28,7 +28,15 @@ const Index = () => {
   const [calYear, setCalYear] = useState(new Date().getFullYear());
   const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks } = useTasks();
   const { goals, addGoal, toggleGoal, deleteGoal, editGoal, getDatesWithGoals } = useGoals();
-  const { colors, setCategoryColor, resetColors } = useCategoryColors();
+  const { colors, setCategoryColor, resetColors, completedDayColor, setCompletedDayColor } = useCategoryColors();
+
+  // Compute dates where all tasks are completed
+  const completedDates = new Set(
+    Array.from(getDatesWithTasks().keys()).filter(date => {
+      const dateTasks = tasks.filter(t => t.date === date);
+      return dateTasks.length > 0 && dateTasks.every(t => t.completed);
+    })
+  );
   const { activeTheme, setTheme, themes } = useTheme();
   const { signOut } = useAuth();
 
@@ -71,7 +79,7 @@ const Index = () => {
           </div>
 
           <FamilySharingDialog />
-          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} />
+          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} completedDayColor={completedDayColor} onChangeCompletedDayColor={setCompletedDayColor} />
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={signOut} title="Sign out">
             <LogOut className="h-4 w-4" />
           </Button>
@@ -87,6 +95,7 @@ const Index = () => {
                 onSelectDate={setSelectedDate}
                 datesWithTasks={getDatesWithTasks()}
                 datesWithGoals={getDatesWithGoals()}
+                completedDates={completedDates}
                 onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
               />
               <GoalReminders goals={goals} viewYear={calYear} viewMonth={calMonth} />

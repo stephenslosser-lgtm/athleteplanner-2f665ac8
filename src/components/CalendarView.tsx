@@ -9,6 +9,7 @@ interface CalendarViewProps {
   onSelectDate: (date: string) => void;
   datesWithTasks: Map<string, Set<TaskCategory>>;
   datesWithGoals?: Set<string>;
+  completedDates?: Set<string>;
   onMonthChange?: (year: number, month: number) => void;
 }
 
@@ -19,7 +20,7 @@ function toDateStr(y: number, m: number, d: number) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 
-export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, datesWithGoals, onMonthChange }: CalendarViewProps) {
+export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, datesWithGoals, completedDates, onMonthChange }: CalendarViewProps) {
   const today = new Date();
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -80,6 +81,7 @@ export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, dates
           const isSelected = dateStr === selectedDate;
           const categories = datesWithTasks.get(dateStr);
           const hasGoal = datesWithGoals?.has(dateStr);
+          const isAllCompleted = completedDates?.has(dateStr);
 
           return (
             <button
@@ -88,8 +90,9 @@ export function CalendarView({ selectedDate, onSelectDate, datesWithTasks, dates
               className={cn(
                 "relative flex flex-col items-center justify-center py-2 rounded-lg transition-all text-sm",
                 isSelected && "bg-primary/20 text-primary ring-1 ring-primary/40",
-                isToday && !isSelected && "bg-secondary text-foreground font-semibold",
-                !isSelected && !isToday && "hover:bg-secondary/60 text-foreground/80"
+                isAllCompleted && !isSelected && "bg-completed-day/20 text-completed-day font-semibold",
+                isToday && !isSelected && !isAllCompleted && "bg-secondary text-foreground font-semibold",
+                !isSelected && !isToday && !isAllCompleted && "hover:bg-secondary/60 text-foreground/80"
               )}
             >
               {day}
