@@ -23,7 +23,7 @@ interface ColorSettingsProps {
 
 const categories: TaskCategory[] = ['training', 'academic', 'personal'];
 
-export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme }: ColorSettingsProps) {
+export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme, completedDayColor, onChangeCompletedDayColor }: ColorSettingsProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
