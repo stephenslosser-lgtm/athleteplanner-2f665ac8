@@ -13,17 +13,20 @@ export interface Goal {
   due_date: string | null;
 }
 
-export function useGoals() {
+export function useGoals(viewUserId?: string | null) {
   const [goals, setGoals] = useState<Goal[]>([]);
   const { user } = useAuth();
 
+  const targetUserId = viewUserId ?? user?.id;
+
   useEffect(() => {
-    if (!user) { setGoals([]); return; }
+    if (!user || !targetUserId) { setGoals([]); return; }
 
     const fetch = async () => {
       const { data, error } = await supabase
         .from('goals' as any)
         .select('*')
+        .eq('user_id', targetUserId)
         .order('created_at', { ascending: false });
 
       if (!error && data) {
@@ -38,19 +41,19 @@ export function useGoals() {
       }
     };
     fetch();
-  }, [user]);
+  }, [user, targetUserId]);
 
   const addGoal = useCallback(async (title: string, type: GoalType, dueDate?: string | null) => {
-    if (!user) return;
+    if (!user || !targetUserId) return;
     const { data, error } = await (supabase.from('goals' as any) as any)
-      .insert({ title, type, user_id: user.id, due_date: dueDate || null })
+      .insert({ title, type, user_id: targetUserId, due_date: dueDate || null })
       .select()
       .single();
 
     if (!error && data) {
       setGoals(prev => [{ id: data.id, title: data.title, type: data.type as GoalType, completed: data.completed, created_at: data.created_at, due_date: data.due_date }, ...prev]);
     }
-  }, [user]);
+  }, [user, targetUserId]);
 
   const toggleGoal = useCallback(async (id: string) => {
     const goal = goals.find(g => g.id === id);

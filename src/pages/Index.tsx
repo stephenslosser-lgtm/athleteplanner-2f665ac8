@@ -8,11 +8,13 @@ import { GoalsList } from '@/components/GoalsList';
 import { GoalReminders } from '@/components/GoalReminders';
 import { FamilySharingDialog } from '@/components/FamilySharingDialog';
 import { QuickStats } from '@/components/QuickStats';
+import { CalendarSelector } from '@/components/CalendarSelector';
 import { useTasks } from '@/hooks/useTasks';
 import { useGoals } from '@/hooks/useGoals';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
+import { useFamilyMembers } from '@/hooks/useFamilyMembers';
 import { LogOut, CalendarDays, Target } from 'lucide-react';
 import brandLogo from '@/assets/brand-logo.png';
 import { Button } from '@/components/ui/button';
@@ -26,11 +28,13 @@ const Index = () => {
   const [activeView, setActiveView] = useState<ViewTab>('planner');
   const [calMonth, setCalMonth] = useState(new Date().getMonth());
   const [calYear, setCalYear] = useState(new Date().getFullYear());
-  const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks } = useTasks();
-  const { goals, addGoal, toggleGoal, deleteGoal, editGoal, getDatesWithGoals } = useGoals();
+  const [viewUserId, setViewUserId] = useState<string | null>(null);
+  
+  const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks, isOwnCalendar } = useTasks(viewUserId);
+  const { goals, addGoal, toggleGoal, deleteGoal, editGoal, getDatesWithGoals } = useGoals(viewUserId);
   const { colors, setCategoryColor, resetColors, completedDayColor, setCompletedDayColor } = useCategoryColors();
+  const { familyMembers } = useFamilyMembers();
 
-  // Compute dates where all tasks are completed
   const completedDates = new Set(
     Array.from(getDatesWithTasks().keys()).filter(date => {
       const dateTasks = tasks.filter(t => t.date === date);
@@ -39,6 +43,10 @@ const Index = () => {
   );
   const { activeTheme, setTheme, themes } = useTheme();
   const { signOut } = useAuth();
+
+  const viewingName = viewUserId
+    ? familyMembers.find(m => m.user_id === viewUserId)?.display_name ?? 'Family Member'
+    : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,10 +59,11 @@ const Index = () => {
             <h1 className="text-xl font-display font-bold tracking-tight">
               Athlete<span className="text-gradient">Planner</span>
             </h1>
-            <p className="text-xs text-muted-foreground">Train. Study. Dominate.</p>
+            <p className="text-xs text-muted-foreground">
+              {viewingName ? `Viewing ${viewingName}'s calendar` : 'Train. Study. Dominate.'}
+            </p>
           </div>
 
-          {/* View tabs */}
           <div className="flex items-center gap-1 bg-secondary/50 rounded-lg p-1">
             <button
               onClick={() => setActiveView('planner')}
@@ -98,6 +107,11 @@ const Index = () => {
                 completedDates={completedDates}
                 onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
               />
+              <CalendarSelector
+                familyMembers={familyMembers}
+                selectedUserId={viewUserId}
+                onSelectUser={setViewUserId}
+              />
               <GoalReminders goals={goals} viewYear={calYear} viewMonth={calMonth} />
               <QuickStats tasks={tasks} />
               <AddTaskDialog selectedDate={selectedDate} onAdd={addTask} />
@@ -114,7 +128,14 @@ const Index = () => {
             </div>
           </div>
         ) : (
-          <div className="max-w-xl mx-auto">
+          <div className="max-w-xl mx-auto space-y-4">
+            {familyMembers.length > 0 && (
+              <CalendarSelector
+                familyMembers={familyMembers}
+                selectedUserId={viewUserId}
+                onSelectUser={setViewUserId}
+              />
+            )}
             <GoalsList goals={goals} addGoal={addGoal} toggleGoal={toggleGoal} deleteGoal={deleteGoal} editGoal={editGoal} />
           </div>
         )}
