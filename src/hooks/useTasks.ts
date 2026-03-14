@@ -3,13 +3,15 @@ import { Task, TaskCategory } from '@/types/task';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
-export function useTasks() {
+export function useTasks(viewUserId?: string | null) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const { user } = useAuth();
 
-  // Fetch tasks from database
+  // The user whose tasks we're viewing (default: current user)
+  const targetUserId = viewUserId ?? user?.id;
+
   useEffect(() => {
-    if (!user) {
+    if (!user || !targetUserId) {
       setTasks([]);
       return;
     }
@@ -18,6 +20,7 @@ export function useTasks() {
       const { data, error } = await supabase
         .from('tasks')
         .select('*')
+        .eq('user_id', targetUserId)
         .order('date', { ascending: true });
 
       if (!error && data) {
@@ -34,14 +37,14 @@ export function useTasks() {
     };
 
     fetchTasks();
-  }, [user]);
+  }, [user, targetUserId]);
 
   const addTask = useCallback(async (title: string, category: TaskCategory, date: string, time?: string, end_time?: string) => {
-    if (!user) return;
+    if (!user || !targetUserId) return;
 
     const { data, error } = await supabase
       .from('tasks')
-      .insert({ title, category, date, user_id: user.id, time: time ?? null, end_time: end_time ?? null } as any)
+      .insert({ title, category, date, user_id: targetUserId, time: time ?? null, end_time: end_time ?? null } as any)
       .select()
       .single();
 
@@ -56,7 +59,7 @@ export function useTasks() {
         end_time: (data as any).end_time ?? undefined,
       }]);
     }
-  }, [user]);
+  }, [user, targetUserId]);
 
   const toggleTask = useCallback(async (id: string) => {
     const task = tasks.find(t => t.id === id);
@@ -107,5 +110,8 @@ export function useTasks() {
     return dates;
   }, [tasks]);
 
-  return { tasks, addTask, toggleTask, editTask, deleteTask, getTasksForDate, getDatesWithTasks };
+  // Whether the current user can add/edit tasks for the target user
+  const isOwnCalendar = !viewUserId || viewUserId === user?.id;
+
+  return { tasks, addTask, toggleTask, editTask, deleteTask, getTasksForDate, getDatesWithTasks, isOwnCalendar };
 }
