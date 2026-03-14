@@ -1,18 +1,20 @@
 import { useAuth } from '@/hooks/useAuth';
-import { FamilyMemberProfile } from '@/hooks/useFamilyMembers';
+import { FamilyGroup } from '@/hooks/useFamilySharing';
 import { cn } from '@/lib/utils';
 import { User, Users } from 'lucide-react';
 
+export type CalendarFilter = 
+  | { type: 'personal' }
+  | { type: 'group'; groupId: string; groupName: string };
+
 interface CalendarSelectorProps {
-  familyMembers: FamilyMemberProfile[];
-  selectedUserId: string | null; // null = own calendar
-  onSelectUser: (userId: string | null) => void;
+  groups: FamilyGroup[];
+  activeFilter: CalendarFilter;
+  onSelectFilter: (filter: CalendarFilter) => void;
 }
 
-export function CalendarSelector({ familyMembers, selectedUserId, onSelectUser }: CalendarSelectorProps) {
-  const { user } = useAuth();
-
-  if (familyMembers.length === 0) return null;
+export function CalendarSelector({ groups, activeFilter, onSelectFilter }: CalendarSelectorProps) {
+  if (groups.length === 0) return null;
 
   return (
     <div className="bg-card rounded-xl p-4 border border-border space-y-2">
@@ -21,10 +23,10 @@ export function CalendarSelector({ familyMembers, selectedUserId, onSelectUser }
         Calendars
       </div>
       <button
-        onClick={() => onSelectUser(null)}
+        onClick={() => onSelectFilter({ type: 'personal' })}
         className={cn(
           "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors",
-          selectedUserId === null
+          activeFilter.type === 'personal'
             ? "bg-primary/15 text-primary ring-1 ring-primary/30 font-medium"
             : "hover:bg-secondary/60 text-foreground/80"
         )}
@@ -32,19 +34,19 @@ export function CalendarSelector({ familyMembers, selectedUserId, onSelectUser }
         <User className="w-3.5 h-3.5" />
         My Calendar
       </button>
-      {familyMembers.map(member => (
+      {groups.map(group => (
         <button
-          key={member.user_id}
-          onClick={() => onSelectUser(member.user_id)}
+          key={group.id}
+          onClick={() => onSelectFilter({ type: 'group', groupId: group.id, groupName: group.name })}
           className={cn(
             "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors",
-            selectedUserId === member.user_id
+            activeFilter.type === 'group' && activeFilter.groupId === group.id
               ? "bg-primary/15 text-primary ring-1 ring-primary/30 font-medium"
               : "hover:bg-secondary/60 text-foreground/80"
           )}
         >
-          <User className="w-3.5 h-3.5" />
-          {member.display_name}
+          <Users className="w-3.5 h-3.5" />
+          {group.name}
         </button>
       ))}
     </div>

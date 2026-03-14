@@ -2,26 +2,33 @@ import { useState, useEffect, useCallback } from 'react';
 import { Task, TaskCategory } from '@/types/task';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { CalendarFilter } from '@/components/CalendarSelector';
 
-export function useTasks(viewUserId?: string | null) {
+export function useTasks(filter?: CalendarFilter) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const { user } = useAuth();
 
-  // The user whose tasks we're viewing (default: current user)
-  const targetUserId = viewUserId ?? user?.id;
+  const activeFilter = filter ?? { type: 'personal' as const };
 
   useEffect(() => {
-    if (!user || !targetUserId) {
+    if (!user) {
       setTasks([]);
       return;
     }
 
     const fetchTasks = async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('tasks')
         .select('*')
-        .eq('user_id', targetUserId)
         .order('date', { ascending: true });
+
+      if (activeFilter.type === 'personal') {
+        query = query.eq('user_id', user.id).is('group_id', null);
+      } else {
+        query = query.eq('group_id', activeFilter.groupId);
+      }
+
+      const { data, error } = await query;
 
       if (!error && data) {
         setTasks(data.map(t => ({
@@ -37,14 +44,27 @@ export function useTasks(viewUserId?: string | null) {
     };
 
     fetchTasks();
-  }, [user, targetUserId]);
+  }, [user, activeFilter.type, activeFilter.type === 'group' ? activeFilter.groupId : null]);
 
   const addTask = useCallback(async (title: string, category: TaskCategory, date: string, time?: string, end_time?: string) => {
-    if (!user || !targetUserId) return;
+    if (!user) return;
+
+    const insertData: any = {
+      title,
+      category,
+      date,
+      user_id: user.id,
+      time: time ?? null,
+      end_time: end_time ?? null,
+    };
+
+    if (activeFilter.type === 'group') {
+      insertData.group_id = activeFilter.groupId;
+    }
 
     const { data, error } = await supabase
       .from('tasks')
-      .insert({ title, category, date, user_id: targetUserId, time: time ?? null, end_time: end_time ?? null } as any)
+      .insert(insertData as any)
       .select()
       .single();
 
@@ -59,7 +79,7 @@ export function useTasks(viewUserId?: string | null) {
         end_time: (data as any).end_time ?? undefined,
       }]);
     }
-  }, [user, targetUserId]);
+  }, [user, activeFilter]);
 
   const toggleTask = useCallback(async (id: string) => {
     const task = tasks.find(t => t.id === id);
@@ -110,8 +130,5 @@ export function useTasks(viewUserId?: string | null) {
     return dates;
   }, [tasks]);
 
-  // Whether the current user can add/edit tasks for the target user
-  const isOwnCalendar = !viewUserId || viewUserId === user?.id;
-
-  return { tasks, addTask, toggleTask, editTask, deleteTask, getTasksForDate, getDatesWithTasks, isOwnCalendar };
+  return { tasks, addTask, toggleTask, editTask, deleteTask, getTasksForDate, getDatesWithTasks };
 }
