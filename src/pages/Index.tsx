@@ -8,13 +8,13 @@ import { GoalsList } from '@/components/GoalsList';
 import { GoalReminders } from '@/components/GoalReminders';
 import { FamilySharingDialog } from '@/components/FamilySharingDialog';
 import { QuickStats } from '@/components/QuickStats';
-import { CalendarSelector } from '@/components/CalendarSelector';
+import { CalendarSelector, CalendarFilter } from '@/components/CalendarSelector';
 import { useTasks } from '@/hooks/useTasks';
 import { useGoals } from '@/hooks/useGoals';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
-import { useFamilyMembers } from '@/hooks/useFamilyMembers';
+import { useFamilySharing } from '@/hooks/useFamilySharing';
 import { LogOut, CalendarDays, Target } from 'lucide-react';
 import brandLogo from '@/assets/brand-logo.png';
 import { Button } from '@/components/ui/button';
@@ -28,12 +28,12 @@ const Index = () => {
   const [activeView, setActiveView] = useState<ViewTab>('planner');
   const [calMonth, setCalMonth] = useState(new Date().getMonth());
   const [calYear, setCalYear] = useState(new Date().getFullYear());
-  const [viewUserId, setViewUserId] = useState<string | null>(null);
-  
-  const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks, isOwnCalendar } = useTasks(viewUserId);
-  const { goals, addGoal, toggleGoal, deleteGoal, editGoal, getDatesWithGoals } = useGoals(viewUserId);
+  const [calFilter, setCalFilter] = useState<CalendarFilter>({ type: 'personal' });
+
+  const { tasks, addTask, toggleTask, editTask, deleteTask, getDatesWithTasks } = useTasks(calFilter);
+  const { goals, addGoal, toggleGoal, deleteGoal, editGoal, getDatesWithGoals } = useGoals();
   const { colors, setCategoryColor, resetColors, completedDayColor, setCompletedDayColor } = useCategoryColors();
-  const { familyMembers } = useFamilyMembers();
+  const { groups } = useFamilySharing();
 
   const completedDates = new Set(
     Array.from(getDatesWithTasks().keys()).filter(date => {
@@ -44,9 +44,7 @@ const Index = () => {
   const { activeTheme, setTheme, themes } = useTheme();
   const { signOut } = useAuth();
 
-  const viewingName = viewUserId
-    ? familyMembers.find(m => m.user_id === viewUserId)?.display_name ?? 'Family Member'
-    : null;
+  const calendarLabel = calFilter.type === 'group' ? calFilter.groupName : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -60,7 +58,7 @@ const Index = () => {
               Athlete<span className="text-gradient">Planner</span>
             </h1>
             <p className="text-xs text-muted-foreground">
-              {viewingName ? `Viewing ${viewingName}'s calendar` : 'Train. Study. Dominate.'}
+              {calendarLabel ? `Viewing ${calendarLabel}` : 'Train. Study. Dominate.'}
             </p>
           </div>
 
@@ -108,9 +106,9 @@ const Index = () => {
                 onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
               />
               <CalendarSelector
-                familyMembers={familyMembers}
-                selectedUserId={viewUserId}
-                onSelectUser={setViewUserId}
+                groups={groups}
+                activeFilter={calFilter}
+                onSelectFilter={setCalFilter}
               />
               <GoalReminders goals={goals} viewYear={calYear} viewMonth={calMonth} />
               <QuickStats tasks={tasks} />
@@ -128,14 +126,7 @@ const Index = () => {
             </div>
           </div>
         ) : (
-          <div className="max-w-xl mx-auto space-y-4">
-            {familyMembers.length > 0 && (
-              <CalendarSelector
-                familyMembers={familyMembers}
-                selectedUserId={viewUserId}
-                onSelectUser={setViewUserId}
-              />
-            )}
+          <div className="max-w-xl mx-auto">
             <GoalsList goals={goals} addGoal={addGoal} toggleGoal={toggleGoal} deleteGoal={deleteGoal} editGoal={editGoal} />
           </div>
         )}
