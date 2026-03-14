@@ -125,6 +125,7 @@ export type Database = {
           created_at: string
           date: string
           end_time: string | null
+          group_id: string | null
           id: string
           time: string | null
           title: string
@@ -136,6 +137,7 @@ export type Database = {
           created_at?: string
           date: string
           end_time?: string | null
+          group_id?: string | null
           id?: string
           time?: string | null
           title: string
@@ -147,12 +149,21 @@ export type Database = {
           created_at?: string
           date?: string
           end_time?: string | null
+          group_id?: string | null
           id?: string
           time?: string | null
           title?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
