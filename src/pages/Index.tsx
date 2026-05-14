@@ -43,6 +43,7 @@ const Index = () => {
     })
   );
   const { activeTheme, setTheme, themes } = useTheme();
+  const { background, setBackground, opacity, setOpacity } = useBackground();
   const { signOut } = useAuth();
 
   const calendarLabel = calFilter.type === 'group' ? calFilter.groupName : null;
