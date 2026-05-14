@@ -1,9 +1,12 @@
-import { Settings2 } from 'lucide-react';
+import { Settings2, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TaskCategory, COLOR_PRESETS, CATEGORY_LABELS } from '@/types/task';
 import { ThemePreset } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { Slider } from '@/components/ui/slider';
+import { useRef } from 'react';
+import { toast } from 'sonner';
 import {
   Popover,
   PopoverContent,
@@ -19,11 +22,35 @@ interface ColorSettingsProps {
   onChangeTheme: (name: string) => void;
   completedDayColor: string;
   onChangeCompletedDayColor: (hsl: string) => void;
+  background: string | null;
+  onChangeBackground: (img: string | null) => void;
+  backgroundOpacity: number;
+  onChangeBackgroundOpacity: (v: number) => void;
 }
 
 const categories: TaskCategory[] = ['training', 'academic', 'personal'];
 
-export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme, completedDayColor, onChangeCompletedDayColor }: ColorSettingsProps) {
+export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme, completedDayColor, onChangeCompletedDayColor, background, onChangeBackground, backgroundOpacity, onChangeBackgroundOpacity }: ColorSettingsProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be under 5MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      const result = e.target?.result as string;
+      onChangeBackground(result);
+      toast.success('Background updated');
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -82,6 +109,62 @@ export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, the
                 </button>
               ))}
             </div>
+          </div>
+
+          <Separator className="bg-border" />
+
+          {/* Background Image Section */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-display text-sm font-semibold">Background</h3>
+              {background && (
+                <button
+                  onClick={() => onChangeBackground(null)}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                >
+                  <X className="h-3 w-3" /> Clear
+                </button>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={e => {
+                const f = e.target.files?.[0];
+                if (f) handleFile(f);
+                e.target.value = '';
+              }}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className={cn(
+                "w-full h-20 rounded-lg border border-dashed border-border bg-secondary/40 hover:bg-secondary/70 transition-colors flex items-center justify-center text-xs text-muted-foreground gap-2 overflow-hidden relative"
+              )}
+              style={background ? { backgroundImage: `url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+            >
+              {background ? (
+                <span className="bg-background/70 px-2 py-1 rounded text-foreground">Change image</span>
+              ) : (
+                <>
+                  <Upload className="h-3.5 w-3.5" /> Upload image
+                </>
+              )}
+            </button>
+            {background && (
+              <div className="mt-3">
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Overlay {Math.round(backgroundOpacity * 100)}%</label>
+                <Slider
+                  value={[backgroundOpacity * 100]}
+                  min={0}
+                  max={95}
+                  step={5}
+                  onValueChange={v => onChangeBackgroundOpacity(v[0] / 100)}
+                  className="mt-1.5"
+                />
+              </div>
+            )}
           </div>
 
           <Separator className="bg-border" />

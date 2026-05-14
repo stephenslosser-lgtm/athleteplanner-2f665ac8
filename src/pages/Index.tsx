@@ -13,6 +13,7 @@ import { useTasks } from '@/hooks/useTasks';
 import { useGoals } from '@/hooks/useGoals';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
 import { useTheme } from '@/hooks/useTheme';
+import { useBackground } from '@/hooks/useBackground';
 import { useAuth } from '@/hooks/useAuth';
 import { useFamilySharing } from '@/hooks/useFamilySharing';
 import { LogOut, CalendarDays, Target } from 'lucide-react';
@@ -42,6 +43,7 @@ const Index = () => {
     })
   );
   const { activeTheme, setTheme, themes } = useTheme();
+  const { background, setBackground, opacity, setOpacity } = useBackground();
   const { signOut } = useAuth();
 
   const calendarLabel = calFilter.type === 'group' ? calFilter.groupName : null;
@@ -87,7 +89,7 @@ const Index = () => {
           </div>
 
           <FamilySharingDialog />
-          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} completedDayColor={completedDayColor} onChangeCompletedDayColor={setCompletedDayColor} />
+          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} completedDayColor={completedDayColor} onChangeCompletedDayColor={setCompletedDayColor} background={background} onChangeBackground={setBackground} backgroundOpacity={opacity} onChangeBackgroundOpacity={setOpacity} />
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={signOut} title="Sign out">
             <LogOut className="h-4 w-4" />
           </Button>
