@@ -47,18 +47,19 @@ const Index = () => {
   const calendarLabel = calFilter.type === 'group' ? calFilter.groupName : null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border px-6 py-4">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="ambient-glow" />
+      <header className="relative border-b border-border/60 px-6 py-4 backdrop-blur-xl bg-background/60">
         <div className="max-w-5xl mx-auto flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg overflow-hidden flex items-center justify-center">
-            <img src={brandLogo} alt="Athlete Planner logo" className="w-9 h-9 object-cover" />
+          <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-border/60 bg-card">
+            <img src={brandLogo} alt="Athlete Planner logo" className="w-10 h-10 object-cover" />
           </div>
           <div className="flex-1">
-            <h1 className="text-xl font-display font-bold tracking-tight">
-              Athlete<span className="text-gradient">Planner</span>
+            <h1 className="text-2xl font-display tracking-tight leading-none">
+              Athlete<span className="italic text-primary">Planner</span>
             </h1>
-            <p className="text-xs text-muted-foreground">
-              {calendarLabel ? `Viewing ${calendarLabel}` : 'Train. Study. Dominate.'}
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mt-1">
+              {calendarLabel ? `Viewing · ${calendarLabel}` : 'Train · Study · Dominate'}
             </p>
           </div>
 
