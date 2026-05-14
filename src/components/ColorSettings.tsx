@@ -167,6 +167,19 @@ export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, the
                 />
               </div>
             )}
+            {background && (
+              <div className="mt-3">
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Card Opacity {Math.round(cardOpacity * 100)}%</label>
+                <Slider
+                  value={[cardOpacity * 100]}
+                  min={5}
+                  max={100}
+                  step={5}
+                  onValueChange={v => onChangeCardOpacity(v[0] / 100)}
+                  className="mt-1.5"
+                />
+              </div>
+            )}
           </div>
 
           <Separator className="bg-border" />
