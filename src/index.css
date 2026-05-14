@@ -2,44 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 220 20% 7%;
-    --foreground: 210 20% 95%;
+    --background: 240 10% 3%;
+    --foreground: 210 20% 96%;
 
-    --card: 220 18% 11%;
-    --card-foreground: 210 20% 95%;
+    --card: 240 8% 6%;
+    --card-foreground: 210 20% 96%;
 
-    --popover: 220 18% 13%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 240 8% 7%;
+    --popover-foreground: 210 20% 96%;
 
-    --primary: 174 72% 50%;
-    --primary-foreground: 220 20% 7%;
+    --primary: 220 90% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 16% 16%;
-    --secondary-foreground: 210 20% 85%;
+    --secondary: 240 6% 12%;
+    --secondary-foreground: 210 20% 88%;
 
-    --muted: 220 14% 14%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 240 6% 10%;
+    --muted-foreground: 220 8% 55%;
 
-    --accent: 174 72% 50%;
-    --accent-foreground: 220 20% 7%;
+    --accent: 220 90% 60%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 55%;
-    --destructive-foreground: 210 20% 95%;
+    --destructive-foreground: 210 20% 96%;
 
-    --border: 220 14% 18%;
-    --input: 220 14% 18%;
-    --ring: 174 72% 50%;
+    --border: 240 6% 14%;
+    --input: 240 6% 14%;
+    --ring: 220 90% 60%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    --training: 174 72% 50%;
-    --academic: 45 90% 55%;
-    --personal: 280 65% 60%;
-    --completed-day: 145 65% 45%;
+    --training: 200 85% 60%;
+    --academic: 38 92% 60%;
+    --personal: 280 70% 65%;
+    --completed-day: 150 60% 50%;
 
     --sidebar-background: 220 18% 9%;
     --sidebar-foreground: 210 20% 85%;
