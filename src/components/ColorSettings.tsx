@@ -26,11 +26,13 @@ interface ColorSettingsProps {
   onChangeBackground: (img: string | null) => void;
   backgroundOpacity: number;
   onChangeBackgroundOpacity: (v: number) => void;
+  cardOpacity: number;
+  onChangeCardOpacity: (v: number) => void;
 }
 
 const categories: TaskCategory[] = ['training', 'academic', 'personal'];
 
-export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme, completedDayColor, onChangeCompletedDayColor, background, onChangeBackground, backgroundOpacity, onChangeBackgroundOpacity }: ColorSettingsProps) {
+export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme, completedDayColor, onChangeCompletedDayColor, background, onChangeBackground, backgroundOpacity, onChangeBackgroundOpacity, cardOpacity, onChangeCardOpacity }: ColorSettingsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (file: File) => {
@@ -161,6 +163,19 @@ export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, the
                   max={95}
                   step={5}
                   onValueChange={v => onChangeBackgroundOpacity(v[0] / 100)}
+                  className="mt-1.5"
+                />
+              </div>
+            )}
+            {background && (
+              <div className="mt-3">
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Card Opacity {Math.round(cardOpacity * 100)}%</label>
+                <Slider
+                  value={[cardOpacity * 100]}
+                  min={5}
+                  max={100}
+                  step={5}
+                  onValueChange={v => onChangeCardOpacity(v[0] / 100)}
                   className="mt-1.5"
                 />
               </div>

@@ -43,7 +43,7 @@ const Index = () => {
     })
   );
   const { activeTheme, setTheme, themes } = useTheme();
-  const { background, setBackground, opacity, setOpacity } = useBackground();
+  const { background, setBackground, opacity, setOpacity, cardOpacity, setCardOpacity } = useBackground();
   const { signOut } = useAuth();
 
   const calendarLabel = calFilter.type === 'group' ? calFilter.groupName : null;
@@ -89,7 +89,7 @@ const Index = () => {
           </div>
 
           <FamilySharingDialog />
-          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} completedDayColor={completedDayColor} onChangeCompletedDayColor={setCompletedDayColor} background={background} onChangeBackground={setBackground} backgroundOpacity={opacity} onChangeBackgroundOpacity={setOpacity} />
+          <ColorSettings colors={colors} onChangeColor={setCategoryColor} onReset={resetColors} activeTheme={activeTheme} themes={themes} onChangeTheme={setTheme} completedDayColor={completedDayColor} onChangeCompletedDayColor={setCompletedDayColor} background={background} onChangeBackground={setBackground} backgroundOpacity={opacity} onChangeBackgroundOpacity={setOpacity} cardOpacity={cardOpacity} onChangeCardOpacity={setCardOpacity} />
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={signOut} title="Sign out">
             <LogOut className="h-4 w-4" />
           </Button>

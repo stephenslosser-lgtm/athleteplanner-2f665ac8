@@ -2,10 +2,12 @@ import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = 'athlete-planner-background';
 const OPACITY_KEY = 'athlete-planner-background-opacity';
+const CARD_OPACITY_KEY = 'athlete-planner-card-opacity';
 
-function apply(image: string | null, opacity: number) {
+function apply(image: string | null, opacity: number, cardOpacity: number) {
   const html = document.documentElement;
   const body = document.body;
+  html.style.setProperty('--card-alpha', String(cardOpacity));
   if (image) {
     const overlay = Math.max(0, Math.min(1, 1 - opacity));
     html.style.backgroundImage = `linear-gradient(hsl(var(--background) / ${overlay}), hsl(var(--background) / ${overlay})), url("${image}")`;
@@ -36,10 +38,16 @@ export function useBackground() {
       return v ? parseFloat(v) : 0.6;
     } catch { return 0.6; }
   });
+  const [cardOpacity, setCardOpacityState] = useState<number>(() => {
+    try {
+      const v = localStorage.getItem(CARD_OPACITY_KEY);
+      return v ? parseFloat(v) : 0.85;
+    } catch { return 0.85; }
+  });
 
   useEffect(() => {
-    apply(background, opacity);
-  }, [background, opacity]);
+    apply(background, opacity, cardOpacity);
+  }, [background, opacity, cardOpacity]);
 
   const setBackground = useCallback((image: string | null) => {
     setBackgroundState(image);
@@ -54,5 +62,10 @@ export function useBackground() {
     try { localStorage.setItem(OPACITY_KEY, String(v)); } catch {}
   }, []);
 
-  return { background, setBackground, opacity, setOpacity };
+  const setCardOpacity = useCallback((v: number) => {
+    setCardOpacityState(v);
+    try { localStorage.setItem(CARD_OPACITY_KEY, String(v)); } catch {}
+  }, []);
+
+  return { background, setBackground, opacity, setOpacity, cardOpacity, setCardOpacity };
 }

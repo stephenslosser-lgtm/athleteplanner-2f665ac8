@@ -1,8 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -100,4 +101,12 @@
 body[data-custom-bg="true"],
 body[data-custom-bg="true"] .bg-background {
   background-color: transparent !important;
+}
+
+body[data-custom-bg="true"] .bg-card {
+  background-color: hsl(var(--card) / var(--card-alpha, 0.85)) !important;
+}
+
+body[data-custom-bg="true"] .bg-secondary {
+  background-color: hsl(var(--secondary) / calc(var(--card-alpha, 0.85) * 0.7)) !important;
 }
