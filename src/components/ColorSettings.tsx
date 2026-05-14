@@ -1,9 +1,12 @@
-import { Settings2 } from 'lucide-react';
+import { Settings2, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TaskCategory, COLOR_PRESETS, CATEGORY_LABELS } from '@/types/task';
 import { ThemePreset } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { Slider } from '@/components/ui/slider';
+import { useRef } from 'react';
+import { toast } from 'sonner';
 import {
   Popover,
   PopoverContent,
@@ -19,11 +22,35 @@ interface ColorSettingsProps {
   onChangeTheme: (name: string) => void;
   completedDayColor: string;
   onChangeCompletedDayColor: (hsl: string) => void;
+  background: string | null;
+  onChangeBackground: (img: string | null) => void;
+  backgroundOpacity: number;
+  onChangeBackgroundOpacity: (v: number) => void;
 }
 
 const categories: TaskCategory[] = ['training', 'academic', 'personal'];
 
-export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme, completedDayColor, onChangeCompletedDayColor }: ColorSettingsProps) {
+export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme, completedDayColor, onChangeCompletedDayColor, background, onChangeBackground, backgroundOpacity, onChangeBackgroundOpacity }: ColorSettingsProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be under 5MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      const result = e.target?.result as string;
+      onChangeBackground(result);
+      toast.success('Background updated');
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
