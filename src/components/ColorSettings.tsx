@@ -26,11 +26,13 @@ interface ColorSettingsProps {
   onChangeBackground: (img: string | null) => void;
   backgroundOpacity: number;
   onChangeBackgroundOpacity: (v: number) => void;
+  cardOpacity: number;
+  onChangeCardOpacity: (v: number) => void;
 }
 
 const categories: TaskCategory[] = ['training', 'academic', 'personal'];
 
-export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme, completedDayColor, onChangeCompletedDayColor, background, onChangeBackground, backgroundOpacity, onChangeBackgroundOpacity }: ColorSettingsProps) {
+export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, themes, onChangeTheme, completedDayColor, onChangeCompletedDayColor, background, onChangeBackground, backgroundOpacity, onChangeBackgroundOpacity, cardOpacity, onChangeCardOpacity }: ColorSettingsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (file: File) => {
