@@ -4,19 +4,25 @@ const STORAGE_KEY = 'athlete-planner-background';
 const OPACITY_KEY = 'athlete-planner-background-opacity';
 
 function apply(image: string | null, opacity: number) {
+  const html = document.documentElement;
   const body = document.body;
   if (image) {
-    body.style.backgroundImage = `linear-gradient(hsl(var(--background) / ${1 - opacity}), hsl(var(--background) / ${1 - opacity})), url(${image})`;
-    body.style.backgroundSize = 'cover';
-    body.style.backgroundPosition = 'center';
-    body.style.backgroundAttachment = 'fixed';
-    body.style.backgroundRepeat = 'no-repeat';
+    const overlay = Math.max(0, Math.min(1, 1 - opacity));
+    html.style.backgroundImage = `linear-gradient(hsl(var(--background) / ${overlay}), hsl(var(--background) / ${overlay})), url("${image}")`;
+    html.style.backgroundSize = 'cover';
+    html.style.backgroundPosition = 'center';
+    html.style.backgroundAttachment = 'fixed';
+    html.style.backgroundRepeat = 'no-repeat';
+    body.style.backgroundColor = 'transparent';
+    body.dataset.customBg = 'true';
   } else {
-    body.style.backgroundImage = '';
-    body.style.backgroundSize = '';
-    body.style.backgroundPosition = '';
-    body.style.backgroundAttachment = '';
-    body.style.backgroundRepeat = '';
+    html.style.backgroundImage = '';
+    html.style.backgroundSize = '';
+    html.style.backgroundPosition = '';
+    html.style.backgroundAttachment = '';
+    html.style.backgroundRepeat = '';
+    body.style.backgroundColor = '';
+    delete body.dataset.customBg;
   }
 }
 
