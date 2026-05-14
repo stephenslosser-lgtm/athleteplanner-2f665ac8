@@ -22,7 +22,25 @@ export interface ThemePreset {
 export const THEME_PRESETS: ThemePreset[] = [
   // Dark themes
   {
-    name: 'Teal (Default)',
+    name: 'Obsidian (Default)',
+    mode: 'dark',
+    primary: '220 90% 60%',
+    accent: '220 90% 60%',
+    background: '240 10% 3%',
+    foreground: '210 20% 96%',
+    card: '240 8% 6%',
+    cardForeground: '210 20% 96%',
+    secondary: '240 6% 12%',
+    secondaryForeground: '210 20% 88%',
+    muted: '240 6% 10%',
+    mutedForeground: '220 8% 55%',
+    border: '240 6% 14%',
+    destructiveForeground: '210 20% 96%',
+    primaryForeground: '0 0% 100%',
+    popoverForeground: '210 20% 96%',
+  },
+  {
+    name: 'Teal',
     mode: 'dark',
     primary: '174 72% 50%',
     accent: '174 72% 50%',
