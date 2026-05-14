@@ -113,6 +113,62 @@ export function ColorSettings({ colors, onChangeColor, onReset, activeTheme, the
 
           <Separator className="bg-border" />
 
+          {/* Background Image Section */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-display text-sm font-semibold">Background</h3>
+              {background && (
+                <button
+                  onClick={() => onChangeBackground(null)}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                >
+                  <X className="h-3 w-3" /> Clear
+                </button>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={e => {
+                const f = e.target.files?.[0];
+                if (f) handleFile(f);
+                e.target.value = '';
+              }}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className={cn(
+                "w-full h-20 rounded-lg border border-dashed border-border bg-secondary/40 hover:bg-secondary/70 transition-colors flex items-center justify-center text-xs text-muted-foreground gap-2 overflow-hidden relative"
+              )}
+              style={background ? { backgroundImage: `url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+            >
+              {background ? (
+                <span className="bg-background/70 px-2 py-1 rounded text-foreground">Change image</span>
+              ) : (
+                <>
+                  <Upload className="h-3.5 w-3.5" /> Upload image
+                </>
+              )}
+            </button>
+            {background && (
+              <div className="mt-3">
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Overlay {Math.round(backgroundOpacity * 100)}%</label>
+                <Slider
+                  value={[backgroundOpacity * 100]}
+                  min={0}
+                  max={95}
+                  step={5}
+                  onValueChange={v => onChangeBackgroundOpacity(v[0] / 100)}
+                  className="mt-1.5"
+                />
+              </div>
+            )}
+          </div>
+
+          <Separator className="bg-border" />
+
           {/* Category Colors Section */}
           <div className="flex items-center justify-between">
             <h3 className="font-display text-sm font-semibold">Category Colors</h3>
