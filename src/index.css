@@ -95,3 +95,9 @@
     @apply text-[10px] uppercase tracking-[0.2em] font-semibold text-muted-foreground;
   }
 }
+
+/* When a custom background image is active, let it show through page wrappers */
+body[data-custom-bg="true"],
+body[data-custom-bg="true"] .bg-background {
+  background-color: transparent !important;
+}
