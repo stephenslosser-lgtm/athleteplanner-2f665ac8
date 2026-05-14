@@ -13,6 +13,7 @@ import { useTasks } from '@/hooks/useTasks';
 import { useGoals } from '@/hooks/useGoals';
 import { useCategoryColors } from '@/hooks/useCategoryColors';
 import { useTheme } from '@/hooks/useTheme';
+import { useBackground } from '@/hooks/useBackground';
 import { useAuth } from '@/hooks/useAuth';
 import { useFamilySharing } from '@/hooks/useFamilySharing';
 import { LogOut, CalendarDays, Target } from 'lucide-react';
